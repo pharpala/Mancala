@@ -1,37 +1,45 @@
 package mancala;
 
+// completed
+
 public class Store implements Countable{
 
-    private int stoneCount=0;
     private Player owner;
+    private int stoneCount;
 
-    public Store() { //initializes a new store
-        this.stoneCount = 0;
-        this.owner = null;
+    public Store() {
+        stoneCount = 0;
+        owner = null;
     }
 
-    public void addStones(int amount) { //add stones to the store
-        this.stoneCount = stoneCount + amount;
-    }  
-
-    public Player getOwner() { //gets owner of the store
-        return this.owner;
+    public Player getOwner() {
+        return owner;
     }
 
-    public void setOwner(Player player) { //sets the owner of the store
-        this.owner = player;       
+    public void setOwner(Player player) {
+        owner = player;
     }
 
     public int getStoneCount() {
-        return this.stoneCount;
+        return stoneCount;
     }
 
-    public void addStone() {
-        this.stoneCount++;
+
+    public void addStones(int amount) {
+        stoneCount += amount;
+    }
+
+     public void addStone() {
+        stoneCount ++;
     }
 
     public int removeStones() {
-        int val = this.stoneCount;
-        this.stoneCount = 0;
-        return val;
+        int stones = stoneCount;
+        stoneCount = 0;
+        return stones;
     }
+
+    // Removed toString()
+
+}
+   

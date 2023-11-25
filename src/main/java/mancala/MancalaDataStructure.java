@@ -14,7 +14,7 @@ public class MancalaDataStructure {
     private final int PLAYER_TWO = 13;
     private  int START_STONES = 4;  //not final because we might want a different size board in the future
 
-    private List<Countable> data = new ArrayList<>();
+    private ArrayList<Countable> data = new ArrayList<>();
     private int iteratorPos = 0;
     private int playerSkip = PLAYER_TWO;
     private int pitSkip = -1; // will never match the iteratorPos unless set specifically
@@ -112,11 +112,13 @@ public class MancalaDataStructure {
         if(pitNum<1 || pitNum > 12){
             throw new RuntimeException("Pit Number Out of Range");
         }
-        int pos = pitNum;
+        int pos = pitNum - 1;
         if (pos <= PLAYER_ONE) {
-            pos--;
+            return pos;
+        } else{
+            return pos + 1;
         }
-        return pos;
+        
     }
 
     /*helper method to convert player number to an array position*/
@@ -153,6 +155,8 @@ public class MancalaDataStructure {
         for (int i = 7; i < PLAYER_TWO; i++) {
             data.get(i).addStones(START_STONES);
         }
+//        System.out.println(data.get(PLAYER_TWO).getStoneCount());
+//        System.out.println(data.get(5).getStoneCount());
     }
 
     /**
@@ -215,5 +219,23 @@ public class MancalaDataStructure {
         loopIterator(); // in case we've run off the end
         skipPosition(); // skip store and start position if necessary
         return data.get(iteratorPos);
+    }
+
+   public void storeSum() {
+    int playerOneStonesSum = 0;
+    for (int i = 0; i < 6; i++) {
+        playerOneStonesSum += data.get(i).removeStones();
+    }
+    data.get(PLAYER_ONE).addStones(playerOneStonesSum);
+
+    int playerTwoStonesSum = 0;
+    for (int i = 7; i < 13; i++) {
+        playerTwoStonesSum += data.get(i).removeStones();
+    }
+    data.get(PLAYER_TWO).addStones(playerTwoStonesSum);
+}
+
+    public ArrayList<Countable> AList(){
+        return data;
     }
 }

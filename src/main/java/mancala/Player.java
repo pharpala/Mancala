@@ -1,35 +1,35 @@
 package mancala;
+import java.io.Serializable;
 
-public class Player {
+public class Player implements Serializable {
+    private String name;
+    private Store store;
 
-    private Store userStore;
-    private String userName;
+    private static final long serialVersionUID = 1L; // You can choose any value for the version ID
 
-    public Player() { //initialize a new Player
-        this.userStore = new Store();
-        this.userName = "Player";
+    public Player() {
+        name = "Player";
+        store = new Store();
+    }
+    
+    public Player(String name) {
+        this.name = name;
+        this.store = new Store();
+    }
+   
+    public String getName() {
+        return name;
     }
 
-    public Player(String name) { //initialize a new player with a name
-        this.userStore = new Store();
-        this.userName = name;
+    public Store getStore() {
+        return store;
     }
 
-    public String getName() { //gets the name of the players
-        return this.userName;
+    public void setStore(Store newStore){
+        this.store = newStore;
     }
 
-    public Store getStore() { //gets the players store
-        return this.userStore;
-    }
-
-    public void setStore(Store store) {
-        this.userStore = store;
-        //System.out.println("Setting store for player " + this.userName + ": " + store.getOwner());
-    }
-
-    @Override
-    public String toString() {
-        return "Player: " + userName + ", Store: " + userStore.toString();
+    public String toString(){
+        return name;
     }
 }

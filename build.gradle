@@ -1,10 +1,7 @@
 plugins {
     id 'java'
     id 'pmd' // Add the PMD plugin
-
-
 }
-
 repositories {
     mavenCentral()
     jcenter()
@@ -22,10 +19,18 @@ jar {
     archiveBaseName = 'TextUI'
 }
 
+task echo {
+    doFirst {
+        println "To run the program from JAR:\njava -jar build/libs/TextUI.jar"
+        println "To run the program from class files:\njava -cp build/classes/java/main ui.TextUI" // Update the package and class name
+    }
+}
+
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
+
 
 pmd {
     toolVersion = "6.55.0"
@@ -38,8 +43,6 @@ pmd {
         ]
     }
 }
-
-
 
 test {
     useJUnitPlatform()

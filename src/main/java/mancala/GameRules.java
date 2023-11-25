@@ -6,7 +6,10 @@ package mancala;
  */
 public abstract class GameRules {
     private MancalaDataStructure gameBoard;
-    private int currentPlayer = 1; // Player number (1 or 2)
+    private int currentPlayer = 1;
+    private int otherPlayer = 2; 
+    private Countable playerOneStore;
+    private Countable playerTwoStore;// Player number (1 or 2)
 
     /**
      * Constructor to initialize the game board.
@@ -41,7 +44,27 @@ public abstract class GameRules {
      * @return True if the side is empty, false otherwise.
      */
     boolean isSideEmpty(int pitNum) {
-        // This method can be implemented in the abstract class.
+        if(pitNum < 0 || pitNum > 12){
+            throw new PitNotFoundException();
+        }
+        int endIndex = pitNum;
+        int startIndex;
+        if(endIndex<=6){
+            startIndex = 0;
+            endIndex = 6;
+        } else{
+            startIndex = 6;
+            endIndex = 11;
+        }// 0-5 for Player One, 7-12 for Player Two
+        for(int i = startIndex; i<= endIndex;i++){
+            if(i==6 || i == 13){
+                continue;
+            }
+            if(gameBoard.getNumStones(i)>0){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -86,11 +109,11 @@ public abstract class GameRules {
      * @param two The second player.
      */
     public void registerPlayers(Player one, Player two) {
-        // this method can be implemented in the abstract class.
-
-
-        /* make a new store in this method, set the owner
-         then use the setStore(store,playerNum) method of the data structure*/
+        // Connects Players to their Stores
+        if (one != null && two != null) {
+            gameBoard.setStore(playerOneStore,currentPlayer);
+            gameBoard.setStore(playerTwoStore,otherPlayer);
+        }
     }
 
     /**
@@ -103,6 +126,6 @@ public abstract class GameRules {
 
     @Override
     public String toString() {
-        // Implement toString() method logic here.
+        return "";
     }
 }

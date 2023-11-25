@@ -2,11 +2,13 @@ package mancala;
 
 public class AyoRules extends GameRules {
     private MancalaDataStructure gameBoard;
-    private int currentPlayer = 1; //if the player is number 1 or 2
+    private int currentPlayer = 1; // Player number (1 or 2)
+
 
     public AyoRules(MancalaDataStructure gameBoard){
         this.gameBoard = gameBoard;
     }
+
 
     /**
      * Perform a move and return the number of stones added to the player's store.
@@ -18,22 +20,25 @@ public class AyoRules extends GameRules {
      */
     @Override
     public int moveStones(int startPit, int playerNum) throws InvalidMoveException {
-        if (currentPlayer == 1) {
-            if (gameBoard.getNumStones(startPit) == 0 || startPit < 1 || startPit > 6) {
+        if (currentPlayer == 2) {
+            // Check if the selected pit for playerTwo is valid
+            if (gameBoard.getNumStones(startPit) == 0 || startPit < 7 || startPit > 12) {
                 throw new InvalidMoveException();
             }
         } else if (currentPlayer == 1) {
-            if (gameBoard.getNumStones(startPit) == 0 || startPit < 7 || startPit > 13) {
+            if (gameBoard.getNumStones(startPit) == 0 || startPit < 0 || startPit > 5) {
                 throw new InvalidMoveException();
             }
         }
     
-        if (startPit < 13 && startPit >= 1) {
+        if (startPit < 13 && startPit >= 0) {
             int stonesToDistribute = gameBoard.getNumStones(startPit);
     
             if (stonesToDistribute > 0) {
                 distributeStones(startPit);
-                int lastPit = (startPit + stonesToDistribute - 1) % 12;
+    
+                // Check if the last stone landed in an empty pit or a pit with 1 or 2 stones
+                int lastPit = (startPit + stonesToDistribute - 1) % 14;
                 int lastStoneCount = gameBoard.getNumStones(lastPit);
     
                 if ((lastStoneCount == 1 || lastStoneCount == 2) && gameBoard.getNumStones(lastPit) > 0) {
@@ -43,7 +48,6 @@ public class AyoRules extends GameRules {
                 }
             } else {
                 System.out.println("No stones inside selected pit!");
-                throw new InvalidMoveException();
             }
         } else {
             System.out.println("Invalid pit.");

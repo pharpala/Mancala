@@ -2,8 +2,7 @@ package mancala;
 
 public class KalahRules extends GameRules{
     private MancalaDataStructure gameBoard;
-    private int currentPlayer = 1; //player 1 or 2
-
+    private int currentPlayer = 1; // Player number (1 or 2) 
     /**
      * Perform a move and return the number of stones added to the player's store.
      *
@@ -21,24 +20,29 @@ public class KalahRules extends GameRules{
     @Override
     public int moveStones(int startPit, int playerNum) throws InvalidMoveException{
         
-        if(this.currentPlayer == 2){
+        if(currentPlayer == 2){
+             // Check if the selected pit for playerTwo is valid
             if (gameBoard.getNumStones(startPit) == 0 || startPit < 7 || startPit > 12) {
                 throw new InvalidMoveException();
             }
         } else if (currentPlayer == 1){
-            if (gameBoard.getNumStones(startPit)==0 || startPit < 1 || startPit > 6) {
+            if (gameBoard.getNumStones(startPit)==0 || startPit < 0 || startPit > 5) {
                 throw new InvalidMoveException();
             }
         
-        }
-            
-        if (gameBoard.getNumStones(startPit)>0) {
+        }                
+        if (startPit < 13 && startPit >= 0) {
+            if (gameBoard.getNumStones(startPit)>0) {  // Check if there are stones in the selected pit
                 distributeStones(startPit);              
+            } else {
+                System.out.println("No stones inside selected pit!");
+            }
         } else {
-            System.out.println("No stones inside selected pit!");
-            throw new InvalidMoveException();
+            System.out.println("Invalid pit."); 
         }
-        return gameBoard.getStoreCount(playerNum);
+       return gameBoard.getStoreCount(playerNum);
+        
+
     }
 
     /**
@@ -49,33 +53,42 @@ public class KalahRules extends GameRules{
      */
     @Override
     public int distributeStones(int startPit) throws PitNotFoundException{
+
+        // Check if the starting point is outside the valid range (0 to 12)
+        int myAddedStones = 0;
         int stonesStolen = 0;
         int toDistributeStones = gameBoard.removeStones(startPit - 1);
-        int counterIndex = startPit;
+        int counterIndex = startPit - 1;
         
-        if(startPit < 1 || startPit > 12){
+        if(startPit < 0 || startPit > 12 || startPit == 6 || startPit == 12){
             throw new PitNotFoundException();
         }
         
         while(toDistributeStones > 0){
-
+            
+            if(currentPlayer==1 && counterIndex == 12 && toDistributeStones > 0){
+                counterIndex = 13;    
+            } else if(currentPlayer==2 && counterIndex == 5 && toDistributeStones > 0){
+                counterIndex = 6;    
+            }
             counterIndex++;
-            if(counterIndex > 12){
-                counterIndex = 1;
+            if(counterIndex > 13){
+                counterIndex = 0;
             }
             gameBoard.addStones(counterIndex , 1);
             toDistributeStones--;
-            stonesStolen++;
-
-            if(toDistributeStones == 1 && gameBoard.getNumStones(counterIndex + 1) == 0 && currentPlayer == 1 && counterIndex <7){
-                stonesStolen += captureStones(counterIndex+1);
-                gameBoard.addStones(counterIndex+1,stonesStolen);
-            } else if (toDistributeStones == 1 && gameBoard.getNumStones(counterIndex+1) == 0 && currentPlayer == 2 && counterIndex <13 && counterIndex >6){
+            myAddedStones++;
+            if(toDistributeStones == 1 && gameBoard.getNumStones(counterIndex + 1) == 0 && currentPlayer == 1){
                 stonesStolen = captureStones(counterIndex + 1);
-                gameBoard.addStones(counterIndex+1,stonesStolen);
+                gameBoard.addStones(6,stonesStolen);
+            } else if (toDistributeStones == 1 && gameBoard.getNumStones(counterIndex) == 0 && currentPlayer == 2){
+                stonesStolen = captureStones(counterIndex + 1);
+                gameBoard.addStones(12,stonesStolen);
             }
+            stonesStolen = 0;
         }
-        return stonesStolen;
+                 
+        return myAddedStones;
     }
 
     /**
@@ -92,13 +105,13 @@ public class KalahRules extends GameRules{
         int indexStarting = stoppingPoint - 1; // Calculate the starting index of the pit to capture myStones
         int pitOpposite;
          // Check if the stopping point is outside the valid range (0 to 12)
-        if(stoppingPoint < 1 || stoppingPoint > 12){
+        if(stoppingPoint < 0 || stoppingPoint > 12){
             throw new PitNotFoundException();
         }
        
  // Check if the starting index is within the valid range (0 to 11) and if the pit has one stone
-        if (gameBoard.getNumStones(indexStarting) == 1 && indexStarting > 0 && indexStarting < 12) {
-            pitOpposite = 13 - indexStarting; // Calculate the index of the opposite pit
+        if (gameBoard.getNumStones(indexStarting) == 1 && indexStarting >= 0 && indexStarting < 12) {
+            pitOpposite = 11 - indexStarting; // Calculate the index of the opposite pit
             // Check if the opposite pit has myStones to capture
             if(gameBoard.getNumStones(pitOpposite)!=0) {
                  // Capture myStones from both the starting pit and the opposite pit

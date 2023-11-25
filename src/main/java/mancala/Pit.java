@@ -1,25 +1,38 @@
 package mancala;
 
+// Completed
+
 public class Pit implements Countable{
 
     private int stoneCount;
 
-    public Pit() { //initializes a new pit
-        this.stoneCount = 0;
+    public Pit() {
+        stoneCount = 0;
+    }
+    
+    public void addStone() {
+        stoneCount++;
     }
 
-    public void addStone() { //adds a stone to the pit
-        this.stoneCount++;
+    public void addStones(int count) {
+        stoneCount += count;
     }
 
-    public int getStoneCount() { //gets the number of stones in the pit
-        return this.stoneCount;
+    public int getStoneCount() {
+        return stoneCount;
     }
 
-    public int removeStones() { //removes and returns the numbers of stones from the pit
-        int val = this.stoneCount;
-        this.stoneCount = 0;
-        return val;
+    public int removeStones() {
+        int stones = stoneCount;
+        stoneCount = 0;
+        return stones;
     }
 
+    // Removed toString()
 }
+
+    
+
+
+
+
