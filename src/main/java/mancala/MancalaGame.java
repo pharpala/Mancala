@@ -1,19 +1,27 @@
 package mancala;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MancalaGame{
+public class MancalaGame implements Serializable {
 
-    private Board board;
+    private static final long serialVersionUID = 10;
+    private GameRules gameRules;
     private Player currentPlayer;
-    private ArrayList<Player> players;
+    private Player playerOne;
+    private Player playerTwo;
+    private MancalaDataStructure board = new MancalaDataStructure();
 
-    public MancalaGame() {
-        this.board = new Board(); //make a new board
-        this.players = new ArrayList<>(); //create your player or players
+    public MancalaGame(GameRules gameRules) { //constructor sets players, currPlayer, registers and starts
+        currentPlayer = playerOne;
+        playerOne = new Player("Player One");
+        playerTwo = new Player("Player Two");
+        gameRules.registerPlayers(playerOne, playerTwo);
+        startNewGame();
     }
 
-    public Board getBoard() {
-        return this.board;
+    public GameRules getBoard() {
+       return this.gameRules; 
     }
 
     public Player getCurrentPlayer() {
@@ -21,94 +29,128 @@ public class MancalaGame{
     }
 
     public int getNumStones(int pitNum) throws PitNotFoundException {
-        try {
-            return this.board.getNumStones(pitNum); //get it from board class
-        } catch (IndexOutOfBoundsException e) {
-            throw new PitNotFoundException("Pit " + pitNum + " not found.");
+        if (pitNum > 0 && pitNum < 13) {     
+            return this.gameRules.getNumStones(pitNum);
+        } else {
+            throw new PitNotFoundException();
         }
     }
-
-    public ArrayList<Player> getPlayers() {
-        return this.players;
-    }
-    
+   
     public int getStoreCount(Player player) throws NoSuchPlayerException {
-    if (!this.players.contains(player)) {
-        throw new NoSuchPlayerException("Player not found in the game.");
-    }
-        return player.getStoreCount();
-    }
-
-    public Player getWinner() throws GameNotOverException,PitNotFoundException {
-    if (!isGameOver()) {
-        throw new GameNotOverException("The game is not over yet.");
-    }
-        return currentPlayer;
+        if (player != playerTwo && player != playerOne){ //check if its player or currentPlayer
+            throw new NoSuchPlayerException();
+        }
+        return player.getStore().getStoneCount();
     }
 
-    public boolean isGameOver() throws PitNotFoundException { //check if game is over
-        return (this.board.isSideEmpty(1) || this.board.isSideEmpty(7));
-    }
-
-    public int move(int startPit) throws InvalidMoveException, PitNotFoundException {
-        if(startPit >12 || startPit <1) {
-            throw new InvalidMoveException("Invalid move: try again");
+    public Player getWinner() throws GameNotOverException {
+        if (!isGameOver()) {
+            throw new GameNotOverException();
         }
 
-        if(this.currentPlayer.equals(players.get(0))) {
-            if(startPit>6) {
-                throw new InvalidMoveException("Invalid move: try again");
+        //total number of stones for each player
+        int playerOneStones = playerOne.getStore().getStoneCount();
+        int playerTwoStones = playerTwo.getStore().getStoneCount();
+
+        if(playerOneStones < playerTwoStones){
+            return playerTwo;
+        } else if(playerOneStones > playerTwoStones){
+            return playerOne;
+        }
+        return null; // return null if draw
+    }
+
+    public boolean isGameOver() {
+        boolean emptyP2Pits = true;
+        boolean emptyP1Pits = true;
+       
+        //check pits for player one
+        for (int i = 1; i < 7; i++) {
+            if (gameRules.getNumStones(i) != 0) {
+                emptyP1Pits = false;
+                break;
             }
         }
 
-        if(this.currentPlayer.equals(players.get(1))) {
-            if(startPit<7) {
-                throw new InvalidMoveException("Invalid move: try again");
+        //p2
+        for (int i = 7; i < 13; i++) {
+            if (gameRules.getNumStones(i) != 0) {
+                emptyP2Pits = false;
+                break;
             }
         }
 
-        int stonesToAdd= board.getNumStones(startPit-1);
-        int originalStart = startPit;
-        int checker = (originalStart + stonesToAdd);
-
-        int val = this.board.moveStones(startPit, this.currentPlayer);
-        if(originalStart <7) {
-            if(checker == 7) {
-                return val; //player gets another turn
-            }
-        }
-        if(originalStart < 13 && originalStart > 6) {
-            if(checker == 13) {
-                return val; //player gets another turn
-            }
-        }
-
-        this.currentPlayer = (this.currentPlayer == this.players.get(0)) ? this.players.get(1) : this.players.get(0);
-        return val;
+        //if all pits for either player are empty, the game is over
+        return true;
     }
 
-    public void setBoard(Board theBoard) { //sets the board for the game
-        this.board = theBoard;
+    public int move(int startPit) throws InvalidMoveException {
+
+        int stones = 0;
+        int sumPit = 0;
+
+        // Check if the startPit is within the valid range (0 to 11)
+        if (startPit < 1 || startPit > 12) {
+            throw new InvalidMoveException();
+        }
+
+        int playerNum = (currentPlayer == playerOne) ? 1 : 2;
+        stones = gameRules.moveStones(startPit, playerNum);
+        // Attempt to move stones on the board
+        //stones = gameRules.moveStones(startPit , playerNum) called twice
+
+        // If stones were moved, switch to the next player
+        if (stones > 0) {
+            switchPlayer();
+        }
+
+        // Calculate the sum of stones in pits based on the current player and startPit
+        if (startPit > 1 && startPit < 7 && currentPlayer == playerOne) {
+            for (int i = 1; i < 7; i++) {
+                sumPit += board.getNumStones(i);
+            }
+
+        } else if (startPit > 6 && startPit < 13 && currentPlayer == playerTwo) {
+            for (int i = 7; i < 13; i++) {
+                sumPit += board.getNumStones(i);
+            }
+        }
+        // Return the sum of stones in pits
+        return sumPit;
+        }
+
+    public void setBoard(GameRules theBoard) {
+        // Set the game board to the provided board
+        this.gameRules = theBoard;
     }
 
-    public void setCurrentPlayer(Player player) { //sets the current player
+    public void setCurrentPlayer(Player player) {
+        // Set the current player to the provided player
         this.currentPlayer = player;
     }
 
-    public void setPlayers(Player onePlayer, Player twoPlayer) { //set players
-        this.players.add(onePlayer);
-        this.players.add(twoPlayer);
-        this.currentPlayer = this.players.get(0);
-        this.board.registerPlayers(onePlayer, twoPlayer);
+    public void setPlayers(Player onePlayer, Player twoPlayer) {
+        this.playerOne = onePlayer; // Assign the first player to playerOne and the second player to playerTwo.
+        this.playerTwo = twoPlayer;
+        // Register the players with the game board.
+        this.gameRules.registerPlayers(playerOne, playerTwo);
     }
 
-    public void startNewGame() { //starts a new game by resetting board
-        this.board = new Board();
+    public void startNewGame() {
+        this.gameRules.resetBoard();  //reset the board and assign playerOne to start
+        this.currentPlayer = playerOne;
     }
 
+    public void switchPlayer() {
+        if (this.currentPlayer == playerOne) {
+            this.currentPlayer = playerTwo; //switch Players
+        } else {
+            this.currentPlayer = playerOne;
+        }
+    }
+    
     @Override
     public String toString() {
-        return "MancalaGame: " + players.get(0).getName() + " vs. " + players.get(1).getName();
+        return "MancalaGame: " + playerOne.getName() + " vs. " + playerTwo.getName();
     }
-
 }

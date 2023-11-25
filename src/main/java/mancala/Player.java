@@ -1,12 +1,13 @@
 package mancala;
 
-public class Player extends Object{
+public class Player {
 
     private Store userStore;
     private String userName;
 
     public Player() { //initialize a new Player
         this.userStore = new Store();
+        this.userName = "Player";
     }
 
     public Player(String name) { //initialize a new player with a name
@@ -20,14 +21,6 @@ public class Player extends Object{
 
     public Store getStore() { //gets the players store
         return this.userStore;
-    }
-
-    public int getStoreCount() { //gets the count of numbers of stones in players store
-        return this.userStore.getTotalStones();
-    }
-
-    public void setName(String name) {
-        this.userName = name;
     }
 
     public void setStore(Store store) {

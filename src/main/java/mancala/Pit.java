@@ -1,6 +1,6 @@
 package mancala;
 
-public class Pit {
+public class Pit implements Countable{
 
     private int stoneCount;
 
@@ -20,11 +20,6 @@ public class Pit {
         int val = this.stoneCount;
         this.stoneCount = 0;
         return val;
-    }
-    
-    @Override
-    public String toString() {
-        return "Pit with Stone Count: " + stoneCount;
     }
 
 }
