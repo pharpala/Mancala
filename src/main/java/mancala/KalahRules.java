@@ -1,8 +1,11 @@
 package mancala;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KalahRules extends GameRules{
     private MancalaDataStructure gameBoard;
-    private int currentPlayer = 1; // Player number (1 or 2) 
+    private int currentPlayer = 1; // Player number (1 or 2)
+    private ArrayList<Countable> dataSet = new ArrayList<>(); 
     /**
      * Perform a move and return the number of stones added to the player's store.
      *
@@ -15,33 +18,60 @@ public class KalahRules extends GameRules{
 
      public KalahRules(MancalaDataStructure gameBoard){
         this.gameBoard = gameBoard;
+        dataSet = gameBoard.getData();
+
     }
     
     @Override
-    public int moveStones(int startPit, int playerNum) throws InvalidMoveException{
-        int returnVal = 0;
-        if(playerNum == 2){
-             // Check if the selected pit for playerTwo is valid
-            if (gameBoard.getNumStones(startPit) == 0 || startPit < 7 || startPit > 12) {
-                throw new InvalidMoveException();
-            }
-        } else if (playerNum == 1){
-            if (gameBoard.getNumStones(startPit)==0 || startPit < 0 || startPit > 5) {
-                throw new InvalidMoveException();
-            }
+    public int moveStones(int startPit, int playerNum) throws InvalidMoveException{ //moves stones for the player starting at a specific pit
         
-        }                
-        if (startPit < 13 && startPit >= 0) {
-            if (gameBoard.getNumStones(startPit)>0) {  // Check if there are stones in the selected pit
-                distributeStones(startPit);              
-            } else {
-                System.out.println("No stones inside selected pit!");
-            }
-        } else {
-            System.out.println("Invalid pit."); 
+        if(startPit >13 || startPit <1) {
+            throw new InvalidMoveException("Invalid move: try again");
         }
-       
-       return gameBoard.getStoreCount(playerNum);
+    
+        Countable chosenPit = dataSet.get(startPit-1); //DATASET IS THE NEW PITS AND STORES
+        int stonesToMove = chosenPit.removeStones();
+        int capturedStones= 0;
+        //STORE 1 IS AT 7
+        // STORE 2 IS AT 14
+
+        int currentPitIndex = startPit;
+        while(stonesToMove > 0) {
+            currentPitIndex++;
+            if(currentPitIndex > 14) {
+                currentPitIndex =1;
+            }
+            
+            if(currentPitIndex == 7 && playerNum == 2) {
+                currentPitIndex = 8; //skip store if player 2 is playing
+
+            } else if (currentPitIndex == 14 && playerNum == 1) {
+                currentPitIndex = 1; //skip store if player 1 is playing
+            } else {
+                dataSet.get(currentPitIndex-1).addStone();
+                stonesToMove--;
+            }
+        }
+
+        int lastPit = currentPitIndex;
+        if(playerNum == 1 && lastPit <7 && (dataSet.get(lastPit-1).getStoneCount()== 1)) {
+            try{
+                capturedStones += captureStones(lastPit);
+                return capturedStones;
+            } catch (IndexOutOfBoundsException e) {
+            throw new PitNotFoundException();
+            }
+        }
+
+        if(playerNum == 2 && lastPit <14 && lastPit >7 && (dataSet.get(lastPit-1).getStoneCount()== 1)) {
+            try {
+                capturedStones += captureStones(lastPit);
+                return capturedStones;
+            } catch (IndexOutOfBoundsException e) {
+            throw new PitNotFoundException();
+            }
+        }
+        return capturedStones;
     }
 
     /**
@@ -99,25 +129,27 @@ public class KalahRules extends GameRules{
     @Override
     public int captureStones(int stoppingPoint) throws PitNotFoundException{
 
-        // Initialize the number of myStones captured to zero
-        int capturedStones = 0;
-        int indexStarting = stoppingPoint - 1; // Calculate the starting index of the pit to capture myStones
-        int pitOpposite;
-         // Check if the stopping point is outside the valid range (0 to 12)
-        if(stoppingPoint < 0 || stoppingPoint > 12){
-            throw new PitNotFoundException();
-        }
-       
- // Check if the starting index is within the valid range (0 to 11) and if the pit has one stone
-        if (gameBoard.getNumStones(indexStarting) == 1 && indexStarting >= 0 && indexStarting < 12) {
-            pitOpposite = 11 - indexStarting; // Calculate the index of the opposite pit
-            // Check if the opposite pit has myStones to capture
-            if(gameBoard.getNumStones(pitOpposite)!=0) {
-                 // Capture myStones from both the starting pit and the opposite pit
-                capturedStones = gameBoard.removeStones(pitOpposite);
-                capturedStones += gameBoard.removeStones(indexStarting);
+        try {
+            int capturedStones=0;
+            //System.out.println("********"+stoppingPoint+"*********");
+            int oppositeIndex= 13-stoppingPoint;
+            if(stoppingPoint < 7) {
+                capturedStones += dataSet.get(stoppingPoint-1).removeStones() + dataSet.get(oppositeIndex).removeStones();
+                dataSet.get(6).addStones(capturedStones);
+                return capturedStones;
+            } else {
+                capturedStones += dataSet.get(stoppingPoint-1).removeStones() + dataSet.get(oppositeIndex).removeStones();
+                dataSet.get(13).addStones(capturedStones);
+                return capturedStones;
             }
+        } catch (IndexOutOfBoundsException e) {
+        throw new PitNotFoundException();
         }
-        return capturedStones;
-    }    
+    }
+
+    public int getNumberStones(int startPit) {
+        Countable chosenPit = dataSet.get(startPit-1); //DATASET IS THE NEW PITS AND STORES
+        int stonesToMove = chosenPit.getStoneCount();
+        return stonesToMove;
+    }
 }

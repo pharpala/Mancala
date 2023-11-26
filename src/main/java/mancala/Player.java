@@ -5,7 +5,7 @@ public class Player implements Serializable {
     private String name;
     private Store store;
 
-    private static final long serialVersionUID = 1L; // You can choose any value for the version ID
+    private static final long serialVersionUID = 10; 
 
     public Player() {
         name = "Player";

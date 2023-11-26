@@ -61,60 +61,61 @@ public class MancalaGame implements Serializable {
     }
 
     public boolean isGameOver() {
-        boolean emptyP2Pits = true;
-        boolean emptyP1Pits = true;
 
         for (int i = 1; i <= 6; i++) {
             if (gameRules.getNumStones(i) != 0) {
-                emptyP1Pits = false;
-                break;
+                return false;
             }
         }
 
         for (int i = 7; i <= 12; i++) {
             if (gameRules.getNumStones(i) != 0) {
-                emptyP2Pits = false;
-                break;
+                return false;
             }
         }
-
-        return emptyP1Pits || emptyP2Pits;
+        return true;
     }
 
     public int move(int startPit) throws InvalidMoveException {
-        int stones = 0;
-        int sumPit = 0;
-        int playerNum;
+        int val=0;
+        int stonesToAdd=0;
 
-        if (startPit < 1 || startPit > 12) {
-            System.out.println("*******");
-            throw new InvalidMoveException();
+        if(startPit >13 || startPit <1) {
+            throw new InvalidMoveException("Invalid move: try again");
         }
 
-        if(currentPlayer == playerOne) {
-            playerNum = 1;
-        } else {
-            playerNum = 2;
+        if(this.currentPlayer.equals(playerOne)) {
+            if(startPit>6) {
+                throw new InvalidMoveException("Invalid move: try again");
+            } 
         }
+
+        if(this.currentPlayer.equals(playerTwo)) {
+            if(startPit<7) {
+                throw new InvalidMoveException("Invalid move: try again");
+            } 
+        }
+
         
-        stones = gameRules.moveStones(startPit, playerNum);
 
-        if (stones == 0) {
-            System.out.println("STONES EQUAL TO 0");
-            throw new InvalidMoveException();
-        }
-        
-        int lastPit = (stones + startPit % 14)-2;
-        if(lastPit == 6 && currentPlayer == playerOne) {
-            return stones; //repeat turn if landed on own pit
+        if(this.currentPlayer.equals(playerOne)) {
+            stonesToAdd= this.gameRules.getNumberStones(startPit); //getNumStones calls pitpos which alr does -1startPit
+            val = this.gameRules.moveStones(startPit, 1); //playerNum is 1 
+            if(startPit + stonesToAdd == 7) {
+                return val; //player gets another turn
+            }
         }
 
-        if(lastPit == 13 && currentPlayer == playerTwo) {
-            return stones;
+        if(this.currentPlayer.equals(playerTwo)) {
+            stonesToAdd= this.gameRules.getNumberStones(startPit-1); //getNumStones calls pitpos which alr does -1startPit 
+            val = this.gameRules.moveStones(startPit, 2); //playerNum is 2
+            if(startPit + stonesToAdd == 14) {
+                return val; //player gets another turn
+            }
         }
 
         switchPlayer();
-        return stones;
+        return val;
     }
 
     public void setBoard(GameRules theBoard) {

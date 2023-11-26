@@ -100,7 +100,7 @@ public class MancalaDataStructure {
      * @return The stone count in the pit.
      */
     public int getNumStones(int pitNum) {
-        System.out.println(pitNum +" Pitnum error at getNumStones");
+       // System.out.println(pitNum +" Pitnum error at getNumStones");
         Countable pit = data.get(pitPos(pitNum));
         return pit.getStoneCount();
     }    
@@ -238,7 +238,7 @@ public class MancalaDataStructure {
     data.get(PLAYER_TWO).addStones(playerTwoStonesSum);
 }
 
-    public ArrayList<Countable> AList(){
-        return data;
+    public ArrayList<Countable> getData(){
+        return this.data;
     }
 }

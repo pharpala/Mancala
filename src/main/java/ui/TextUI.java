@@ -1,47 +1,29 @@
 package ui;
+
+import mancala.*;
 import java.util.ArrayList;
 import java.util.Scanner;
-import mancala.*;
 
 public class TextUI {
-    private Scanner scanner = new Scanner(System.in);
-    private MancalaGame myGame;
-    private MancalaDataStructure dataStruct = new MancalaDataStructure();
-    private int runTime = 0;
-    private ArrayList<Countable> data = dataStruct.AList();
-    private int startPit;
-    private int stonesMoved;
-
-    public void getInfo(){
-
-        if(runTime == 0) {
-            dataStruct.setUpPits();
-            runTime =1 ;
-        }
-
-        System.out.println("Player Two's Store : ");
-        System.out.print("   ");
-        for (int i = 12; i > 6; i--) {
-            System.out.print("   " + data.get(i).getStoneCount() + " ");
-        }
-        System.out.println();
-
-        System.out.println("[" + data.get(13).getStoneCount() + "] ---- ---- ---- ---- ---- ---- [" + data.get(6).getStoneCount() + "]");
-        System.out.print("   ");
-
-         for (int i = 0; i < 6; i++) {
-            System.out.print("   " + data.get(i).getStoneCount() + " ");
-        }
-
-        System.out.println();
-        System.out.println("                                Player One's Store");
-        System.out.println();
+    private MancalaGame game;
+    private MancalaDataStructure dataStruct;
+    private Scanner scanner;
+    private ArrayList<Countable> data;
+    Player player1 = new Player("Player 1");
+    Player player2 = new Player("Player 2");
+    
+    public TextUI() {
+        scanner = new Scanner(System.in);
+        dataStruct = new MancalaDataStructure();
+        dataStruct.setUpPits();
+        data = dataStruct.getData(); //PITS AND STORES
+        dataStruct.setStore(data.get(6), 1);
+        dataStruct.setStore(data.get(13), 2);
     }
 
-    public void gameToBegin() {
-        System.out.println("Welcome to Mancala!");
-
-         // Prompt the user to choose the game rules
+ public void runGame() {
+    try {
+        System.out.println("Welcome to my Mancala!");
         System.out.println("Choose the game rules: Enter 'Ayo' for Ayo Rules or 'Kalah' for Kalah Rules");
         String rulesChoice = scanner.nextLine();
 
@@ -51,75 +33,85 @@ public class TextUI {
         } else if ("Kalah".equalsIgnoreCase(rulesChoice)) {
             rules = new KalahRules(dataStruct);
         } else {
-            System.out.println("Invalid choice. Exiting...");
-            scanner.close();
-            return;
+            System.out.println("Invalid choice. Playing Kalah...");
+            rules = new KalahRules(dataStruct);
         }
 
-        myGame = new MancalaGame(rules);
-        // Set up players
-        System.out.print("Enter Player One's name: ");
-        String playerOneName = scanner.nextLine();
-        Player playerOne = new Player(playerOneName);
+        game = new MancalaGame(rules);
 
-        System.out.print("Enter Player Two's name: ");
-        String playerTwoName = scanner.nextLine();
-        Player playerTwo = new Player(playerTwoName);
+        game.setPlayers(player1, player2);
+        game.startNewGame();
+        while (true) {
+            displayBoard();
+            Player currentPlayer = game.getCurrentPlayer();
 
-        // Set up the myGame with players
-        myGame.setPlayers(playerOne, playerTwo);
-        myGame.startNewGame();
-
-        // Main myGame loop
-        while (!myGame.isGameOver()) {
-            System.out.println("Current Board:");
-            getInfo();
-            Player currentPlayer = myGame.getCurrentPlayer();
-            System.out.println("It's " + currentPlayer.getName() + "'s turn.");
-
-            // Prompt the current player to enter the pit number to move from
-            if (currentPlayer == playerOne) {
-                System.out.print("Enter the pit number to move from (1-6): ");
-            } else if (currentPlayer == playerTwo) {
-                System.out.print("Enter the pit number to move from (7-12): ");
+            if (currentPlayer == player1) {
+                System.out.println(player1.getName() + ", it's your turn.\n");
+                System.out.print("Enter the pit number to move stones (1-6): \n");
+            } else {
+                System.out.println(player2.getName() + ", it's your turn.\n");
+                System.out.print("Enter the pit number to move stones (7-12): \n");
             }
 
-            // Get the input for the pit number
+            int pitNumber = scanner.nextInt();
+            if(pitNumber > 5) {
+                pitNumber = pitNumber+1;
+            }
+            
             try {
-                startPit = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a valid number.");
-                continue;
+                int remainingStones = game.move(pitNumber);
+                if (game.isGameOver()) {
+                    displayBoard();
+                    Player winner = game.getWinner();
+                    if (winner != null) {
+                        System.out.println("Congratulations, " + winner.getName() + " wins!");
+                    } else {
+                        System.out.println("It's a tie!");
+                    }
+                    break;
+                }
+            } catch (InvalidMoveException | PitNotFoundException e) {
+                System.out.println("Invalid move. Please try again.");
             }
-
-            // Try to make a move and handle exceptions
-            try {
-                stonesMoved = myGame.getNumStones(startPit+1);
-                myGame.move(startPit+1);
-                System.out.println("gets passed move");
-                System.out.println(currentPlayer.getName() + " moved " + stonesMoved + " stones.");
-            } catch (PitNotFoundException e) {
-                System.out.println("Invalid pit. " + e.getMessage());
-            } catch (InvalidMoveException e) {
-                System.out.println("Invalid move. ********" + e.getMessage());
-            }
-
-            System.out.println(" ");
         }
-
-        // Game over, print the final results
-        System.out.println("Game Over!");
-        getInfo();
-        Player winner = myGame.getWinner();
-        if (winner != null) {
-            System.out.println(winner.getName() + " wins!");
-        } else {
-            System.out.println("It's a tie!");
-        }
+    } catch (GameNotOverException e) {
+        System.out.println("The game is not over yet.");
     }
 
-public static void main(String[] args) {
-        TextUI textUI = new TextUI();
-        textUI.gameToBegin();
+    scanner.close();
 }
+
+
+    private void displayBoard() {
+    System.out.println("Current Mancala Board State:");
+
+    // Get the list of pits and stores from the game board
+
+    // Display the player stores
+    System.out.println(player1.getName() + "'s Store: " + data.get(6).getStoneCount());
+    System.out.println(player2.getName() + "'s Store: " + data.get(13).getStoneCount()); //STORE 1
+
+    // Display the pits for Player 1 (indices 0 to 5)
+    for (int i = 0; i < 6; i++) {
+        System.out.print("Pit " + (i + 1) + ": " + data.get(i).getStoneCount() + "   ");
+    }
+    
+    // Display Store 1 for Player 1
+    System.out.print("Store 1: " + data.get(6).getStoneCount() + "   ");
+    System.out.print("\n");
+    // Display the pits for Player 2 (indices 7 to 12)
+    for (int i = 6; i < 12; i++) {
+        System.out.print("Pit " + (i + 1) + ": " + data.get(i+1).getStoneCount() + "   ");
+    }
+    
+    // Display Store 2 for Player 2
+    System.out.print("Store 2: " + data.get(13).getStoneCount() + "   ");
+    
+    System.out.println();
+}
+
+    public static void main(String[] args) {
+        TextUI testUI = new TextUI();
+        testUI.runGame();
+    }
 }
