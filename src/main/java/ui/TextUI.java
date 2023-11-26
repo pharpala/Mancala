@@ -9,6 +9,8 @@ public class TextUI {
     private MancalaDataStructure board = new MancalaDataStructure();
     private int runTime = 0;
     private ArrayList<Countable> data = board.AList();
+    private int startPit;
+    private int stonesMoved;
 
     public void getInfo(){
 
@@ -91,16 +93,16 @@ public class TextUI {
 
             // Try to make a move and handle exceptions
             try {
-                int stonesMoved = myGame.getNumStones(startPit-1);
-                myGame.move(startPit);
+                stonesMoved = myGame.getNumStones(startPit+1);
+                myGame.move(startPit+1);
                 System.out.println(currentPlayer.getName() + " moved " + stonesMoved + " stones.");
             } catch (PitNotFoundException e) {
                 System.out.println("Invalid pit. " + e.getMessage());
-            }catch (InvalidMoveException e){
-                System.out.println("Invalid move. " + e.getMessage());
+            } catch (InvalidMoveException e) {
+                System.out.println("Invalid move. ********" + e.getMessage());
             }
 
-            System.out.println();
+            System.out.println("it reaches here");
         }
 
         // Game over, print the final results

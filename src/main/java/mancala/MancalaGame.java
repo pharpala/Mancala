@@ -92,18 +92,22 @@ public class MancalaGame implements Serializable {
         int playerNum = (currentPlayer == playerOne) ? 1 : 2;
         stones = gameRules.moveStones(startPit, playerNum);
 
-        if (stones > 0) {
-            switchPlayer();
+        if (stones == 0) {
+            throw new InvalidMoveException();
+        }
+        
+        int lastPit = stones + startPit % 13;
+
+        if(lastPit <7 && getNumStones(lastPit-1) == 1 && currentPlayer == playerOne) {
+            return stones;
         }
 
-        if ((startPit > 0 && startPit < 7 && currentPlayer == playerOne) ||
-            (startPit > 6 && startPit < 13 && currentPlayer == playerTwo)) {
-            for (int i = 1; i <= 12; i++) {
-                sumPit += board.getNumStones(i);
-            }
+        if(lastPit <13 && lastPit>6 && getNumStones(lastPit-1) == 1 && currentPlayer == playerTwo) {
+            return stones;
         }
 
-        return sumPit;
+        switchPlayer();
+        return stones;
     }
 
     public void setBoard(GameRules theBoard) {
