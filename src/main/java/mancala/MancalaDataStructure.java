@@ -100,6 +100,7 @@ public class MancalaDataStructure {
      * @return The stone count in the pit.
      */
     public int getNumStones(int pitNum) {
+        System.out.println(pitNum +" Pitnum error at getNumStones");
         Countable pit = data.get(pitPos(pitNum));
         return pit.getStoneCount();
     }    
@@ -109,7 +110,9 @@ public class MancalaDataStructure {
         /*Runtime execeptions don't need to be declared and are
         automatically passed up the chain until caught. This can
         replace the PitNotFoundException*/
-        if(pitNum<1 || pitNum > 12){
+        if(pitNum<1 || pitNum > 12){ 
+            System.out.println("HERE IS THE ERROR BIG DAWG");
+            System.out.println(pitNum+" Pitnum error at PitPos");
             throw new RuntimeException("Pit Number Out of Range");
         }
         int pos = pitNum - 1;

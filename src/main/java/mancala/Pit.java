@@ -7,15 +7,15 @@ public class Pit implements Countable{
     private int stoneCount;
 
     public Pit() {
-        stoneCount = 0;
+        this.stoneCount = 0;
     }
     
     public void addStone() {
-        stoneCount++;
+        this.stoneCount++;
     }
 
     public void addStones(int count) {
-        stoneCount += count;
+        this.stoneCount += count;
     }
 
     public int getStoneCount() {

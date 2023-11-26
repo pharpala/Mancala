@@ -19,13 +19,13 @@ public class KalahRules extends GameRules{
     
     @Override
     public int moveStones(int startPit, int playerNum) throws InvalidMoveException{
-        
-        if(currentPlayer == 2){
+        int returnVal = 0;
+        if(playerNum == 2){
              // Check if the selected pit for playerTwo is valid
             if (gameBoard.getNumStones(startPit) == 0 || startPit < 7 || startPit > 12) {
                 throw new InvalidMoveException();
             }
-        } else if (currentPlayer == 1){
+        } else if (playerNum == 1){
             if (gameBoard.getNumStones(startPit)==0 || startPit < 0 || startPit > 5) {
                 throw new InvalidMoveException();
             }
@@ -40,9 +40,8 @@ public class KalahRules extends GameRules{
         } else {
             System.out.println("Invalid pit."); 
         }
+       
        return gameBoard.getStoreCount(playerNum);
-        
-
     }
 
     /**

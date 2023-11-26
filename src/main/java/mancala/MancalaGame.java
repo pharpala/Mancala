@@ -82,27 +82,34 @@ public class MancalaGame implements Serializable {
     }
 
     public int move(int startPit) throws InvalidMoveException {
-        int stones;
+        int stones = 0;
         int sumPit = 0;
+        int playerNum;
 
         if (startPit < 1 || startPit > 12) {
+            System.out.println("*******");
             throw new InvalidMoveException();
         }
 
-        int playerNum = (currentPlayer == playerOne) ? 1 : 2;
+        if(currentPlayer == playerOne) {
+            playerNum = 1;
+        } else {
+            playerNum = 2;
+        }
+        
         stones = gameRules.moveStones(startPit, playerNum);
 
         if (stones == 0) {
+            System.out.println("STONES EQUAL TO 0");
             throw new InvalidMoveException();
         }
         
-        int lastPit = stones + startPit % 13;
-
-        if(lastPit <7 && getNumStones(lastPit-1) == 1 && currentPlayer == playerOne) {
-            return stones;
+        int lastPit = (stones + startPit % 14)-2;
+        if(lastPit == 6 && currentPlayer == playerOne) {
+            return stones; //repeat turn if landed on own pit
         }
 
-        if(lastPit <13 && lastPit>6 && getNumStones(lastPit-1) == 1 && currentPlayer == playerTwo) {
+        if(lastPit == 13 && currentPlayer == playerTwo) {
             return stones;
         }
 

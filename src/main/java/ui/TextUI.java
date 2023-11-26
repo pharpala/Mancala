@@ -6,20 +6,21 @@ import mancala.*;
 public class TextUI {
     private Scanner scanner = new Scanner(System.in);
     private MancalaGame myGame;
-    private MancalaDataStructure board = new MancalaDataStructure();
+    private MancalaDataStructure dataStruct = new MancalaDataStructure();
     private int runTime = 0;
-    private ArrayList<Countable> data = board.AList();
+    private ArrayList<Countable> data = dataStruct.AList();
     private int startPit;
     private int stonesMoved;
 
     public void getInfo(){
 
         if(runTime == 0) {
-            board.setUpPits();
+            dataStruct.setUpPits();
             runTime =1 ;
         }
 
         System.out.println("Player Two's Store : ");
+        System.out.print("   ");
         for (int i = 12; i > 6; i--) {
             System.out.print("   " + data.get(i).getStoneCount() + " ");
         }
@@ -46,9 +47,9 @@ public class TextUI {
 
         GameRules rules;
         if ("Ayo".equalsIgnoreCase(rulesChoice)) {
-            rules = new AyoRules(board);
+            rules = new AyoRules(dataStruct);
         } else if ("Kalah".equalsIgnoreCase(rulesChoice)) {
-            rules = new KalahRules(board);
+            rules = new KalahRules(dataStruct);
         } else {
             System.out.println("Invalid choice. Exiting...");
             scanner.close();
@@ -71,7 +72,7 @@ public class TextUI {
 
         // Main myGame loop
         while (!myGame.isGameOver()) {
-            System.out.println("Current board:");
+            System.out.println("Current Board:");
             getInfo();
             Player currentPlayer = myGame.getCurrentPlayer();
             System.out.println("It's " + currentPlayer.getName() + "'s turn.");
@@ -95,6 +96,7 @@ public class TextUI {
             try {
                 stonesMoved = myGame.getNumStones(startPit+1);
                 myGame.move(startPit+1);
+                System.out.println("gets passed move");
                 System.out.println(currentPlayer.getName() + " moved " + stonesMoved + " stones.");
             } catch (PitNotFoundException e) {
                 System.out.println("Invalid pit. " + e.getMessage());
@@ -102,7 +104,7 @@ public class TextUI {
                 System.out.println("Invalid move. ********" + e.getMessage());
             }
 
-            System.out.println("it reaches here");
+            System.out.println(" ");
         }
 
         // Game over, print the final results
