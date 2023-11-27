@@ -14,15 +14,15 @@ compileJava {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'ui.TextUI'
+        attributes 'Main-Class': 'ui.MancalaGUI'
     }
-    archiveBaseName = 'TextUI'
+    archiveBaseName = 'MancalaGUI'
 }
 
 task echo {
     doFirst {
-        println "To run the program from JAR:\njava -jar build/libs/TextUI.jar"
-        println "To run the program from class files:\njava -cp build/classes/java/main ui.TextUI" // Update the package and class name
+        println "To run the program from JAR:\njava -jar build/libs/MancalaGUI.jar"
+        println "To run the program from class files:\njava -cp build/classes/java/main ui.MancalaGUI" // Update the package and class name
     }
 }
 
