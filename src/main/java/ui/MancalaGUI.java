@@ -6,17 +6,17 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class MancalaGUI extends JFrame {
     private MancalaGame game;
-    private MancalaDataStructure dataStruct;
-    private ArrayList<Countable> data;
+    private GameRules rules;
     private Player player1 = new Player("Player 1");
     private Player player2 = new Player("Player 2");
     private Player currentPlayer;
+    private Store store1;
+    private Store store2;
+    
     private JLabel turnLabel;
-
     private JLabel player1StoreLabel;
     private JLabel player2StoreLabel;
     private JButton[] pitButtons;
@@ -36,13 +36,8 @@ public class MancalaGUI extends JFrame {
             final int pitNumber = i + 1;
             pitButtons[i].addActionListener(new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    if(pitNumber <7) {
-                        handlePitButtonClick(pitNumber);
-                    } else {
-                        handlePitButtonClick(pitNumber+1);
-                    }
-
+                public void actionPerformed(ActionEvent e) {    
+                    handlePitButtonClick(pitNumber);
                 }
             });
         }
@@ -73,10 +68,11 @@ public class MancalaGUI extends JFrame {
         // Set up layout
         setLayout(new BorderLayout());
         JPanel gamePanel = new JPanel(new GridLayout(2, 6));
-        for (int i = 0; i < 6; i++) {
+        for (int i = 11; i >= 6; i--) {
             gamePanel.add(pitButtons[i]);
         }
-        for (int i = 11; i >= 6; i--) {
+
+        for (int i = 0; i < 6; i++) {
             gamePanel.add(pitButtons[i]);
         }
 
@@ -127,7 +123,7 @@ public class MancalaGUI extends JFrame {
             MancalaGame loadedGame = (MancalaGame) Saver.loadObject("savedGame.ser");
             game = loadedGame;
             currentPlayer = game.getCurrentPlayer();
-            turnLabel.setText("Turn: " + currentPlayer.getName());
+            turnLabel.setText("Its your turn " + currentPlayer.getName());
             updateGUI();
             JOptionPane.showMessageDialog(this, "Game loaded successfully!");
         } catch (IOException | ClassNotFoundException e) {
@@ -136,13 +132,11 @@ public class MancalaGUI extends JFrame {
     }
 
     private void initializeGame() {
-        dataStruct = new MancalaDataStructure();
-        dataStruct.setUpPits();
-        data = dataStruct.getData();
-        dataStruct.setStore(data.get(6), 1);
-        dataStruct.setStore(data.get(13), 2);
+        rules = new KalahRules();
+        //rules.getDataStructure().setUpPits();
+        store1 = new Store();
+        store2 = new Store ();
 
-        GameRules rules = new KalahRules(dataStruct); // Default to Kalah rules
         game = new MancalaGame(rules);
         game.setPlayers(player1, player2);
         game.startNewGame();
@@ -162,7 +156,7 @@ public class MancalaGUI extends JFrame {
                 updateGUI();
             } else {
                 currentPlayer = game.getCurrentPlayer();
-                turnLabel.setText("Turn: " + currentPlayer.getName());
+                turnLabel.setText("It is your turn " + currentPlayer.getName());
             }
             updateGUI();
         } catch (InvalidMoveException | PitNotFoundException e) {
@@ -171,15 +165,15 @@ public class MancalaGUI extends JFrame {
     }
 
     private void updateGUI() {
-        player1StoreLabel.setText(" " + data.get(6).getStoneCount());
-        player2StoreLabel.setText(" " + data.get(13).getStoneCount());
+        player1StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(1));
+        player2StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(2));
 
         for (int i = 0; i < 6; i++) {
-            pitButtons[i].setText("Pit " + (i + 1) + ": " + data.get(i).getStoneCount());
+            pitButtons[i].setText("Pit " + (i + 1) + ": " + rules.getDataStructure().getNumStones(i+1));
         }
 
         for (int i = 6; i < 12; i++) {
-            pitButtons[i].setText("Pit " + (i + 1) + ": " + data.get(i+1).getStoneCount());
+            pitButtons[i].setText("Pit " + (i + 1) + ": " + rules.getDataStructure().getNumStones(i+1));
         }
     }
 

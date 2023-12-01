@@ -7,15 +7,15 @@ package mancala;
 public abstract class GameRules {
     private MancalaDataStructure gameBoard;
     private int currentPlayer = 1;
-    private int otherPlayer = 2; 
-    private Countable playerOneStore;
-    private Countable playerTwoStore;// Player number (1 or 2)
+    private Player player1 = new Player();
+    private Player player2 = new Player();
 
     /**
      * Constructor to initialize the game board.
      */
     public GameRules() {
         gameBoard = new MancalaDataStructure();
+        resetBoard();
     }
 
     /**
@@ -33,7 +33,7 @@ public abstract class GameRules {
      *
      * @return The MancalaDataStructure.
      */
-    MancalaDataStructure getDataStructure() {
+    public MancalaDataStructure getDataStructure() {
         return gameBoard;
     }
 
@@ -109,17 +109,31 @@ public abstract class GameRules {
      * @param two The second player.
      */
     public void registerPlayers(Player one, Player two) {
-        // Connects Players to their Stores
-        if (one != null && two != null) {
-            gameBoard.setStore(playerOneStore,currentPlayer);
-            gameBoard.setStore(playerTwoStore,otherPlayer);
-        }
+
+        Store storeOne = new Store();
+        Store storeTwo = new Store();
+    
+        // Set the owner of each store
+        storeOne.setOwner(one);
+        storeTwo.setOwner(two);
+    
+        // Assign the stores to the players
+        one.setStore(storeOne);
+        two.setStore(storeTwo);
+    
+        // Integrate the stores into the MancalaDataStructure
+        getDataStructure().setStore(storeOne, 1); // Assigning the store of player one
+        getDataStructure().setStore(storeTwo, 2); // Assigning the store of player two
+    
     }
 
     /**
      * Reset the game board by setting up pits and emptying stores.
      */
     public void resetBoard() {
+        for(int i= 1 ; i < 13 ; i++) {
+            gameBoard.removeStones(i);
+        }
         gameBoard.setUpPits();
         gameBoard.emptyStores();
     }

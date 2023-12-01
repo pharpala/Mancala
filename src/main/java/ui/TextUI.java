@@ -29,12 +29,12 @@ public class TextUI {
 
         GameRules rules;
         if ("Ayo".equalsIgnoreCase(rulesChoice)) {
-            rules = new AyoRules(dataStruct);
+            rules = new AyoRules();
         } else if ("Kalah".equalsIgnoreCase(rulesChoice)) {
-            rules = new KalahRules(dataStruct);
+            rules = new KalahRules();
         } else {
             System.out.println("Invalid choice. Playing Kalah...");
-            rules = new KalahRules(dataStruct);
+            rules = new KalahRules();
         }
 
         game = new MancalaGame(rules);

@@ -16,9 +16,6 @@ public class MancalaGame implements Serializable {
         this.playerOne = new Player("Player One");
         this.playerTwo = new Player("Player Two");
         this.currentPlayer = playerOne;
-
-        gameRules.registerPlayers(playerOne, playerTwo);
-        startNewGame();
     }
 
     public GameRules getBoard() {
@@ -96,22 +93,21 @@ public class MancalaGame implements Serializable {
                 throw new InvalidMoveException("Invalid move: try again");
             } 
         }
-        
+        stonesToAdd= getNumStones(startPit);
+        int lastPitLand = (stonesToAdd + startPit) %14;
 
         if(this.currentPlayer.equals(playerOne)) {
-            //stonesToAdd= getNumStones(startPit); //getNumStones calls pitpos which alr does -1startPit
             val = gameRules.moveStones(startPit, 1); //playerNum is 1 
             //System.out.println(val);
-            if(startPit + stonesToAdd == 7) {
+            if(lastPitLand == 7) {
                 return val; //player gets another turn
             }
         }
 
         if(this.currentPlayer.equals(playerTwo)) {
-            //stonesToAdd= getNumStones(startPit); //getNumStones calls pitpos which alr does -1startPit 
             val = gameRules.moveStones(startPit, 2); //playerNum is 2
             //System.out.println(val);
-            if(startPit + stonesToAdd == 14) {
+            if(lastPitLand == 13) {
                 return val; //player gets another turn
             }
         }

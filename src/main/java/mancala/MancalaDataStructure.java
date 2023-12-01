@@ -221,32 +221,7 @@ public class MancalaDataStructure {
         return data.get(iteratorPos);
     }
 
-   public void storeSum() {
-    int playerOneStonesSum = 0;
-    for (int i = 0; i < 6; i++) {
-        playerOneStonesSum += data.get(i).removeStones();
-    }
-    data.get(PLAYER_ONE).addStones(playerOneStonesSum);
-
-    int playerTwoStonesSum = 0;
-    for (int i = 7; i < 13; i++) {
-        playerTwoStonesSum += data.get(i).removeStones();
-    }
-    data.get(PLAYER_TWO).addStones(playerTwoStonesSum);
-}
-
     public ArrayList<Countable> getData(){
         return this.data;
-    }
-
-    public void updateData(ArrayList<Countable> newData) {
-        // Clear the original data and add all elements from the newData ArrayList
-        data.clear();
-        data.addAll(newData);
-
-        System.out.println("\nContents of data:");
-        for (Countable pit : getData()) {
-            System.out.println("Pit: " + pit.getStoneCount()); // Assuming Countable has a meaningful toString method
-        }
     }
 } 
