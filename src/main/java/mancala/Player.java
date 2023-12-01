@@ -21,6 +21,10 @@ public class Player implements Serializable {
         return name;
     }
 
+    public int getStoreCount() {
+        return this.store.getStoneCount();
+    }
+
     public Store getStore() {
         return store;
     }

@@ -128,6 +128,4 @@ public abstract class GameRules {
     public String toString() {
         return "";
     }
-
-    abstract int getNumberStones(int startPit);
 }

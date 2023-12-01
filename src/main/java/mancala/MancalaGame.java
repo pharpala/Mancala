@@ -9,7 +9,7 @@ public class MancalaGame implements Serializable {
     private Player currentPlayer;
     private Player playerOne;
     private Player playerTwo;
-    private MancalaDataStructure board = new MancalaDataStructure();
+    private MancalaDataStructure board;
 
     public MancalaGame(GameRules gameRules) {
         this.gameRules = gameRules;
@@ -41,7 +41,7 @@ public class MancalaGame implements Serializable {
         if (player != playerTwo && player != playerOne) {
             throw new NoSuchPlayerException();
         }
-        return player.getStore().getStoneCount();
+        return player.getStoreCount();
     }
 
     public Player getWinner() throws GameNotOverException {
@@ -49,8 +49,8 @@ public class MancalaGame implements Serializable {
             throw new GameNotOverException();
         }
 
-        int playerOneStones = playerOne.getStore().getStoneCount();
-        int playerTwoStones = playerTwo.getStore().getStoneCount();
+        int playerOneStones = playerOne.getStoreCount();
+        int playerTwoStones = playerTwo.getStoreCount();
 
         if (playerOneStones < playerTwoStones) {
             return playerTwo;
@@ -63,16 +63,17 @@ public class MancalaGame implements Serializable {
     public boolean isGameOver() {
 
         for (int i = 1; i <= 6; i++) {
-            if (gameRules.getNumStones(i) != 0) {
+            if (getNumStones(i) != 0) {
                 return false;
             }
         }
 
         for (int i = 7; i <= 12; i++) {
-            if (gameRules.getNumStones(i) != 0) {
+            if (getNumStones(i) != 0) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -80,7 +81,7 @@ public class MancalaGame implements Serializable {
         int val=0;
         int stonesToAdd=0;
 
-        if(startPit >13 || startPit <1) {
+        if(startPit >12 || startPit <1) {
             throw new InvalidMoveException("Invalid move: try again");
         }
 
@@ -95,20 +96,21 @@ public class MancalaGame implements Serializable {
                 throw new InvalidMoveException("Invalid move: try again");
             } 
         }
-
         
 
         if(this.currentPlayer.equals(playerOne)) {
-            stonesToAdd= this.gameRules.getNumberStones(startPit); //getNumStones calls pitpos which alr does -1startPit
-            val = this.gameRules.moveStones(startPit, 1); //playerNum is 1 
+            //stonesToAdd= getNumStones(startPit); //getNumStones calls pitpos which alr does -1startPit
+            val = gameRules.moveStones(startPit, 1); //playerNum is 1 
+            //System.out.println(val);
             if(startPit + stonesToAdd == 7) {
                 return val; //player gets another turn
             }
         }
 
         if(this.currentPlayer.equals(playerTwo)) {
-            stonesToAdd= this.gameRules.getNumberStones(startPit-1); //getNumStones calls pitpos which alr does -1startPit 
-            val = this.gameRules.moveStones(startPit, 2); //playerNum is 2
+            //stonesToAdd= getNumStones(startPit); //getNumStones calls pitpos which alr does -1startPit 
+            val = gameRules.moveStones(startPit, 2); //playerNum is 2
+            //System.out.println(val);
             if(startPit + stonesToAdd == 14) {
                 return val; //player gets another turn
             }

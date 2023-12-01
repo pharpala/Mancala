@@ -1,11 +1,11 @@
 package mancala;
 import java.util.ArrayList;
-import java.util.List;
 
 public class KalahRules extends GameRules{
+
     private MancalaDataStructure gameBoard;
     private int currentPlayer = 1; // Player number (1 or 2)
-    private ArrayList<Countable> dataSet = new ArrayList<>(); 
+    private ArrayList<Countable> dataSet; 
     /**
      * Perform a move and return the number of stones added to the player's store.
      *
@@ -15,22 +15,38 @@ public class KalahRules extends GameRules{
      * @throws InvalidMoveException If the move is invalid.
      * 
      */
+     public KalahRules(){
+        super();
+    }
 
      public KalahRules(MancalaDataStructure gameBoard){
+        super();
         this.gameBoard = gameBoard;
-        dataSet = gameBoard.getData();
-
-    }
+        dataSet = new ArrayList<>(gameBoard.getData());
+    }*/
     
     @Override
     public int moveStones(int startPit, int playerNum) throws InvalidMoveException{ //moves stones for the player starting at a specific pit
         
-        if(startPit >13 || startPit <1) {
+        if(startPit >12 || startPit <1) {
             throw new InvalidMoveException("Invalid move: try again");
         }
     
         Countable chosenPit = dataSet.get(startPit-1); //DATASET IS THE NEW PITS AND STORES
         int stonesToMove = chosenPit.removeStones();
+        gameBoard.updateData(dataSet);
+
+        int stonesToMove2 = gameBoard.getNumStones(startPit);
+
+
+        System.out.println("Contents of dataSet:");
+        for (Countable pit : dataSet) {
+            System.out.println("Pit: " + pit.getStoneCount()); // Assuming Countable has a meaningful toString method
+        }
+
+
+        System.out.println(stonesToMove);
+        System.out.println(stonesToMove2);
         int capturedStones= 0;
         //STORE 1 IS AT 7
         // STORE 2 IS AT 14
@@ -136,6 +152,7 @@ public class KalahRules extends GameRules{
             if(stoppingPoint < 7) {
                 capturedStones += dataSet.get(stoppingPoint-1).removeStones() + dataSet.get(oppositeIndex).removeStones();
                 dataSet.get(6).addStones(capturedStones);
+                System.out.println("This is what Capture stones returns: "+capturedStones);
                 return capturedStones;
             } else {
                 capturedStones += dataSet.get(stoppingPoint-1).removeStones() + dataSet.get(oppositeIndex).removeStones();

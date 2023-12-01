@@ -1,7 +1,6 @@
 package mancala;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents a Mancala data structure for the Mancala game.
@@ -100,8 +99,12 @@ public class MancalaDataStructure {
      * @return The stone count in the pit.
      */
     public int getNumStones(int pitNum) {
-       // System.out.println(pitNum +" Pitnum error at getNumStones");
         Countable pit = data.get(pitPos(pitNum));
+        /*System.out.println("\nContents of data:");
+        for (Countable pittie : getData()) {
+            System.out.println("Pit AT GETNUM: " + pittie.getStoneCount()); // Assuming Countable has a meaningful toString method
+        }*/
+
         return pit.getStoneCount();
     }    
 
@@ -110,18 +113,14 @@ public class MancalaDataStructure {
         /*Runtime execeptions don't need to be declared and are
         automatically passed up the chain until caught. This can
         replace the PitNotFoundException*/
-        if(pitNum<1 || pitNum > 12){ 
-            System.out.println("HERE IS THE ERROR BIG DAWG");
-            System.out.println(pitNum+" Pitnum error at PitPos");
+        if(pitNum<1 || pitNum > 12){
             throw new RuntimeException("Pit Number Out of Range");
         }
-        int pos = pitNum - 1;
+        int pos = pitNum;
         if (pos <= PLAYER_ONE) {
-            return pos;
-        } else{
-            return pos + 1;
+            pos--;
         }
-        
+        return pos;
     }
 
     /*helper method to convert player number to an array position*/
@@ -158,8 +157,6 @@ public class MancalaDataStructure {
         for (int i = 7; i < PLAYER_TWO; i++) {
             data.get(i).addStones(START_STONES);
         }
-//        System.out.println(data.get(PLAYER_TWO).getStoneCount());
-//        System.out.println(data.get(5).getStoneCount());
     }
 
     /**
@@ -241,4 +238,15 @@ public class MancalaDataStructure {
     public ArrayList<Countable> getData(){
         return this.data;
     }
-}
+
+    public void updateData(ArrayList<Countable> newData) {
+        // Clear the original data and add all elements from the newData ArrayList
+        data.clear();
+        data.addAll(newData);
+
+        System.out.println("\nContents of data:");
+        for (Countable pit : getData()) {
+            System.out.println("Pit: " + pit.getStoneCount()); // Assuming Countable has a meaningful toString method
+        }
+    }
+} 

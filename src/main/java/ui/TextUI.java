@@ -54,7 +54,7 @@ public class TextUI {
             }
 
             int pitNumber = scanner.nextInt();
-            if(pitNumber > 5) {
+            if(pitNumber > 6) {
                 pitNumber = pitNumber+1;
             }
             

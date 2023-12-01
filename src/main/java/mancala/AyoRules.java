@@ -160,7 +160,4 @@ public class AyoRules extends GameRules {
         return capturedStones;
     }
 
-    public int getNumberStones(int startPit) {
-        return 1;
-    }
 }
