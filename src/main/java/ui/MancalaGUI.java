@@ -15,6 +15,9 @@ public class MancalaGUI extends JFrame {
     private Player currentPlayer;
     private Store store1;
     private Store store2;
+
+    private UserProfile userProfile1;
+    private UserProfile userProfile2;
     
     private JLabel turnLabel;
     private JLabel player1StoreLabel;
@@ -23,6 +26,8 @@ public class MancalaGUI extends JFrame {
     private JButton saveButton;
     private JButton loadButton;
     private JButton exitButton;
+    private JLabel player1GamesPlayedLabel;
+    private JLabel player2GamesPlayedLabel;
 
     public MancalaGUI() {
         initializeGame();
@@ -120,18 +125,22 @@ public class MancalaGUI extends JFrame {
     }
 
 
-
     //Initialize game here
     private void initializeGame() {
         chooseRules();
-        namePlayers();
         store1 = new Store();
         store2 = new Store ();
+
+        player1GamesPlayedLabel = new JLabel("Games Played: 0");
+        player2GamesPlayedLabel = new JLabel("Games Played: 0");
+
+        createUserProfiles();
+        namePlayers();
 
         game = new MancalaGame(rules);
         game.setPlayers(player1, player2);
         game.startNewGame();
-    }
+    } 
 
 
     //Helper method to allow user to choose rules
@@ -155,21 +164,34 @@ public class MancalaGUI extends JFrame {
         }
     }
 
+    //Helper method that creates instances of User Profile
+    private void createUserProfiles() {
+        userProfile1 = new UserProfile();
+        userProfile2 = new UserProfile();
+    }
 
     //Helper method to set player names
     private void namePlayers() {
+
         String name1 = JOptionPane.showInputDialog(this, "Enter name for Player 1:");
         String name2 = JOptionPane.showInputDialog(this, "Enter name for Player 2:");
 
         if (name1 != null && !name1.isEmpty()) {
-            player1 = new Player(name1); 
+            player1 = new Player(name1);
+            userProfile1.addName(name1); // Set user profile name
         }
 
         if (name2 != null && !name2.isEmpty()) {
             player2 = new Player(name2);
+            userProfile2.addName(name2); // Set user profile name
         }
+        updateGamesPlayedLabels();
     }
 
+    private void updateGamesPlayedLabels() {
+        player1GamesPlayedLabel.setText("Games Played: " + userProfile1.getGamesPlayed());
+        player2GamesPlayedLabel.setText("Games Played: " + userProfile2.getGamesPlayed());
+    }
 
     // Button methods go below
     private void handleSaveButtonClick() {
@@ -204,7 +226,9 @@ public class MancalaGUI extends JFrame {
         }
     }
 
+
     private void handlePitButtonClick(int pitNumber) {
+
         try {
             game.move(pitNumber);
             Boolean finishGame = game.isGameOver();
@@ -212,10 +236,20 @@ public class MancalaGUI extends JFrame {
                 Player winner = game.getWinner();
                 if (winner != null) {
                     JOptionPane.showMessageDialog(this, "Congratulations, " + winner.getName() + " wins!");
+                    if (winner == player1) {
+                        userProfile1.incrementGamesWon();
+                    } else {
+                        userProfile2.incrementGamesWon();
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "It's a tie!");
                 }
+
+                updateGamesPlayedLabels();
+
                 initializeGame(); // Start a new game
+                userProfile1.incrementGamesPlayed();
+                userProfile2.incrementGamesPlayed();
                 updateGUI();
             } else {
                 currentPlayer = game.getCurrentPlayer();
@@ -227,9 +261,9 @@ public class MancalaGUI extends JFrame {
         }
     }
 
-
     // Called each time a move is made
     private void updateGUI() {
+
         player1StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(1));
         player2StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(2));
 
@@ -241,7 +275,6 @@ public class MancalaGUI extends JFrame {
             pitButtons[i].setText("Pit " + (i + 1) + ": " + rules.getDataStructure().getNumStones(i+1));
         }
     }
-
 
     //main method
     public static void main(String[] args) {
