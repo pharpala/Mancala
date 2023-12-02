@@ -1,15 +1,6 @@
 package mancala;
 
 public class KalahRules extends GameRules{
-    /**
-     * Perform a move and return the number of stones added to the player's store.
-     *
-     * @param startPit  The starting pit for the move.
-     * @param playerNum The player making the move.
-     * @return The number of stones added to the player's store.
-     * @throws InvalidMoveException If the move is invalid.
-     * 
-     */
     
      int currPlayer=1;
 
@@ -39,16 +30,11 @@ public class KalahRules extends GameRules{
             throw new InvalidMoveException();
         }
 
-        System.out.println("Contents of dataSet:"); 
-        System.out.println(stonesToMove);
-
         int beforeStore = getDataStructure().getStoreCount(playerNum);
-        System.out.println(beforeStore);
 
         distributeStones(startPit);
 
         int afterStore = getDataStructure().getStoreCount(playerNum);
-        System.out.println(afterStore);
 
         return afterStore-beforeStore;
     }
@@ -60,7 +46,7 @@ public class KalahRules extends GameRules{
      * @return The number of stones distributed.
      */
     @Override
-    public int distributeStones(int startPit) {
+    public int distributeStones(int startPit) { 
         Countable chosenCountable;
         int lastIndex;
 
@@ -83,7 +69,7 @@ public class KalahRules extends GameRules{
         
         if(currPlayer == 2 && lastIndex <13 && lastIndex >6 && getDataStructure().getNumStones(lastIndex) == 1) {
             stonesToBeMoved += captureStones(lastIndex);
-        } 
+        }
 
         return stonesToBeMoved;
     }

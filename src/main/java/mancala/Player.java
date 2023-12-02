@@ -33,6 +33,7 @@ public class Player implements Serializable {
         this.store = newStore;
     }
 
+    @Override
     public String toString(){
         return name;
     }

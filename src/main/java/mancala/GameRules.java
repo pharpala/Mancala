@@ -1,14 +1,20 @@
 package mancala;
 
+import java.io.Serializable;
+
 /**
  * Abstract class representing the rules of a Mancala game.
  * KalahRules and AyoRules will subclass this class.
  */
-public abstract class GameRules {
-    private MancalaDataStructure gameBoard;
+public abstract class GameRules implements Serializable {
+
+    
+    private static final long serialVersionUID = 10;
+    
+    final private MancalaDataStructure gameBoard;
     private int currentPlayer = 1;
-    private Player player1 = new Player();
-    private Player player2 = new Player();
+    final private Player player1 = new Player();
+    final private Player player2 = new Player();
 
     /**
      * Constructor to initialize the game board.
@@ -27,6 +33,7 @@ public abstract class GameRules {
     public int getNumStones(int pitNum) {
         return gameBoard.getNumStones(pitNum);
     }
+
 
     /**
      * Get the game data structure.
@@ -49,18 +56,19 @@ public abstract class GameRules {
         }
         int endIndex = pitNum;
         int startIndex;
-        if(endIndex<=6){
+        if (endIndex<=6) {
             startIndex = 0;
             endIndex = 6;
-        } else{
+        } else {
             startIndex = 6;
             endIndex = 11;
-        }// 0-5 for Player One, 7-12 for Player Two
+        }
+        
         for(int i = startIndex; i<= endIndex;i++){
-            if(i==6 || i == 13){
+            if(i==6 || i == 13) {
                 continue;
             }
-            if(gameBoard.getNumStones(i)>0){
+            if(gameBoard.getNumStones(i)>0) {
                 return false;
             }
         }
@@ -112,16 +120,11 @@ public abstract class GameRules {
 
         Store storeOne = new Store();
         Store storeTwo = new Store();
-    
-        // Set the owner of each store
         storeOne.setOwner(one);
         storeTwo.setOwner(two);
-    
-        // Assign the stores to the players
         one.setStore(storeOne);
         two.setStore(storeTwo);
     
-        // Integrate the stores into the MancalaDataStructure
         getDataStructure().setStore(storeOne, 1); // Assigning the store of player one
         getDataStructure().setStore(storeTwo, 2); // Assigning the store of player two
     
@@ -140,6 +143,6 @@ public abstract class GameRules {
 
     @Override
     public String toString() {
-        return "";
+        return " ";
     }
 }

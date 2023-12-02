@@ -1,8 +1,12 @@
 package mancala;
 
+import java.io.Serializable;
+
 // completed
 
-public class Store implements Countable{
+public class Store implements Countable, Serializable{
+
+    private static final long serialVersionUID = 10;
 
     private Player owner;
     private int stoneCount;

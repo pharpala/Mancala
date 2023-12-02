@@ -10,8 +10,8 @@ import java.io.IOException;
 public class MancalaGUI extends JFrame {
     private MancalaGame game;
     private GameRules rules;
-    private Player player1 = new Player("Player 1");
-    private Player player2 = new Player("Player 2");
+    private Player player1;
+    private Player player2;
     private Player currentPlayer;
     private Store store1;
     private Store store2;
@@ -22,6 +22,7 @@ public class MancalaGUI extends JFrame {
     private JButton[] pitButtons;
     private JButton saveButton;
     private JButton loadButton;
+    private JButton exitButton;
 
     public MancalaGUI() {
         initializeGame();
@@ -58,11 +59,20 @@ public class MancalaGUI extends JFrame {
             }
         });
 
+        exitButton = new JButton("Exit Game");
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleExitButtonClick();
+            }
+        });
+
         turnLabel = new JLabel("Its your turn " + player1.getName());
 
         // Set up layout
         JPanel saveLoadPanel = new JPanel();
         saveLoadPanel.add(saveButton);
+        saveLoadPanel.add(exitButton);
         saveLoadPanel.add(loadButton);
 
         // Set up layout
@@ -109,14 +119,69 @@ public class MancalaGUI extends JFrame {
         setVisible(true);
     }
 
+
+
+    //Initialize game here
+    private void initializeGame() {
+        chooseRules();
+        namePlayers();
+        store1 = new Store();
+        store2 = new Store ();
+
+        game = new MancalaGame(rules);
+        game.setPlayers(player1, player2);
+        game.startNewGame();
+    }
+
+
+    //Helper method to allow user to choose rules
+    private void chooseRules() {
+        String[] options = {"AyoRules", "KalahRules"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Choose game rules:",
+                "Game Rules",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+    
+        if (choice == 0) {
+            rules = new AyoRules();
+        } else {
+            rules = new KalahRules();
+        }
+    }
+
+
+    //Helper method to set player names
+    private void namePlayers() {
+        String name1 = JOptionPane.showInputDialog(this, "Enter name for Player 1:");
+        String name2 = JOptionPane.showInputDialog(this, "Enter name for Player 2:");
+
+        if (name1 != null && !name1.isEmpty()) {
+            player1 = new Player(name1); 
+        }
+
+        if (name2 != null && !name2.isEmpty()) {
+            player2 = new Player(name2);
+        }
+    }
+
+
+    // Button methods go below
     private void handleSaveButtonClick() {
         try {
             Saver.saveObject(game, "savedGame.ser");
             JOptionPane.showMessageDialog(this, "Game saved successfully!");
         } catch (IOException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Error saving the game.");
         }
     }
+
 
     private void handleLoadButtonClick() {
         try {
@@ -131,21 +196,19 @@ public class MancalaGUI extends JFrame {
         }
     }
 
-    private void initializeGame() {
-        rules = new KalahRules();
-        //rules.getDataStructure().setUpPits();
-        store1 = new Store();
-        store2 = new Store ();
 
-        game = new MancalaGame(rules);
-        game.setPlayers(player1, player2);
-        game.startNewGame();
+    private void handleExitButtonClick() {
+        int option = JOptionPane.showConfirmDialog(this, "Are you sure you want to exit the game?", "Exit Game", JOptionPane.YES_NO_OPTION);
+        if (option == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
     }
 
     private void handlePitButtonClick(int pitNumber) {
         try {
             game.move(pitNumber);
-            if (game.isGameOver()) {
+            Boolean finishGame = game.isGameOver();
+            if (finishGame) {
                 Player winner = game.getWinner();
                 if (winner != null) {
                     JOptionPane.showMessageDialog(this, "Congratulations, " + winner.getName() + " wins!");
@@ -164,6 +227,8 @@ public class MancalaGUI extends JFrame {
         }
     }
 
+
+    // Called each time a move is made
     private void updateGUI() {
         player1StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(1));
         player2StoreLabel.setText(" " + rules.getDataStructure().getStoreCount(2));
@@ -177,6 +242,8 @@ public class MancalaGUI extends JFrame {
         }
     }
 
+
+    //main method
     public static void main(String[] args) {
         SwingUtilities.invokeLater(MancalaGUI::new);
     }

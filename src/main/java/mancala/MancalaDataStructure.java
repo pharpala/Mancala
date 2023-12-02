@@ -1,5 +1,6 @@
 package mancala;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -8,7 +9,8 @@ import java.util.ArrayList;
  * You may add methods if you need them.
  * Do not add game logic to this class
  */
-public class MancalaDataStructure {
+public class MancalaDataStructure implements Serializable {
+    private static final long serialVersionUID = 10;
     private final int PLAYER_ONE = 6;
     private final int PLAYER_TWO = 13;
     private  int START_STONES = 4;  //not final because we might want a different size board in the future
@@ -219,6 +221,13 @@ public class MancalaDataStructure {
         loopIterator(); // in case we've run off the end
         skipPosition(); // skip store and start position if necessary
         return data.get(iteratorPos);
+    }
+
+    public int getPosition() {
+        if(iteratorPos < 6) {
+            iteratorPos++;
+        }
+        return iteratorPos;
     }
 
     public ArrayList<Countable> getData(){

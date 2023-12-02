@@ -2,7 +2,7 @@ package mancala;
 
 public class AyoRules extends GameRules {
     
-    private int currPlayer;
+    private int currPlayer=1;
 
     public AyoRules(){
         super();
@@ -17,23 +17,23 @@ public class AyoRules extends GameRules {
      * @throws InvalidMoveException If the move is invalid.
      */
     @Override
-    public int moveStones(int startPit, int playerNum) throws InvalidMoveException{
+    public int moveStones(final int startPit,final int playerNum) throws InvalidMoveException{
         if(startPit < 1 || startPit > 12){
             throw new InvalidMoveException();
         }
         
         currPlayer = playerNum;
-        int stonesToMove = getDataStructure().getNumStones(startPit);
+        final int stonesToMove = getDataStructure().getNumStones(startPit);
 
         if(stonesToMove == 0){
             throw new InvalidMoveException();
         }
 
-        int playerStoreBefore = getDataStructure().getStoreCount(playerNum);
+        final int playerStoreBefore = getDataStructure().getStoreCount(playerNum);
         
         distributeStones(startPit);
        
-        int playerStoreAfter = getDataStructure().getStoreCount(playerNum);
+        final int playerStoreAfter = getDataStructure().getStoreCount(playerNum);
 
         return playerStoreAfter - playerStoreBefore;
     }
@@ -45,36 +45,37 @@ public class AyoRules extends GameRules {
      * @return The number of stones distributed.
      */
     @Override
-    public int distributeStones(int startPit){
+    public int distributeStones(final int startPit){
 
-       int numDistributed = 0;
        Countable pit;
-       int stonesToMove = getDataStructure().getNumStones(startPit);
-       int finalIndex = (startPit + stonesToMove) % 13; 
-       if(finalIndex == 0) {
-        finalIndex++;
+       int stonesToMove = getDataStructure().removeStones(startPit);
+       int finalIndex = (startPit + stonesToMove)%13;
+       if(finalIndex > 12) {
+        finalIndex = finalIndex % 12;
        }
-       stonesToMove = getDataStructure().removeStones(startPit);
+
+       int temp;
+       int numDistributed = stonesToMove;
 
        getDataStructure().setIterator(startPit,currPlayer,true);
 
-       while(stonesToMove > 0){
+       while(stonesToMove > 0) {
             pit = getDataStructure().next();
             pit.addStone();
             stonesToMove--;
-            numDistributed++;
 
-            if(stonesToMove - 1 == 0 && getDataStructure().getNumStones(finalIndex) != 0){
-                stonesToMove = getDataStructure().removeStones(finalIndex);
+            if(stonesToMove == 1 && getDataStructure().getNumStones(finalIndex) != 0) {
+                stonesToMove += getDataStructure().removeStones(finalIndex);
             } 
       }
-      if(getDataStructure().getNumStones(finalIndex) == 1 && currPlayer == 1 && finalIndex<7) {
-        stonesToMove += captureStones(finalIndex);
-      }
+      
+        if(getDataStructure().getNumStones(finalIndex) == 1 && currPlayer == 1 && finalIndex<7) {
+            numDistributed += captureStones(finalIndex);
+        }
 
-      if(getDataStructure().getNumStones(finalIndex) == 1 && currPlayer == 2 && finalIndex < 13 && finalIndex > 6) {
-        stonesToMove += captureStones(finalIndex);
-      }
+        if(getDataStructure().getNumStones(finalIndex) == 1 && currPlayer == 2 && finalIndex < 13 && finalIndex > 6) {
+            numDistributed += captureStones(finalIndex);
+        }
 
       
       return numDistributed;
@@ -88,10 +89,10 @@ public class AyoRules extends GameRules {
      * @return The number of stones captured.
      */
     @Override
-    public int captureStones(int stoppingPoint){
+    public int captureStones(final int stoppingPoint){
 
         int capturedStones = 0; 
-        int pitOpposite = 13 - stoppingPoint;
+        final int pitOpposite = 13 - stoppingPoint;
 
         capturedStones = getDataStructure().removeStones(pitOpposite);
         

@@ -9,12 +9,11 @@ public class MancalaGame implements Serializable {
     private Player currentPlayer;
     private Player playerOne;
     private Player playerTwo;
-    private MancalaDataStructure board;
 
     public MancalaGame(GameRules gameRules) {
         this.gameRules = gameRules;
-        this.playerOne = new Player("Player One");
-        this.playerTwo = new Player("Player Two");
+        this.playerOne = new Player();
+        this.playerTwo = new Player();
         this.currentPlayer = playerOne;
     }
 
@@ -46,8 +45,11 @@ public class MancalaGame implements Serializable {
             throw new GameNotOverException();
         }
 
-        int playerOneStones = playerOne.getStoreCount();
-        int playerTwoStones = playerTwo.getStoreCount();
+        int playerOneStones = gameRules.getDataStructure().getStoreCount(1);
+        int playerTwoStones = gameRules.getDataStructure().getStoreCount(2);
+        System.out.println(playerOneStones);
+        System.out.println(playerTwoStones);
+
 
         if (playerOneStones < playerTwoStones) {
             return playerTwo;
@@ -59,19 +61,24 @@ public class MancalaGame implements Serializable {
 
     public boolean isGameOver() {
 
+        boolean emptyBoard1 = true;
+        boolean emptyBoard2 = true;
+
         for (int i = 1; i <= 6; i++) {
             if (getNumStones(i) != 0) {
-                return false;
+                emptyBoard1 = false;
+                break;
             }
         }
 
         for (int i = 7; i <= 12; i++) {
             if (getNumStones(i) != 0) {
-                return false;
+                emptyBoard2 = false;
+                break;
             }
         }
-
-        return true;
+        boolean isEmptyBoard = emptyBoard1 || emptyBoard2;
+        return isEmptyBoard;
     }
 
     public int move(int startPit) throws InvalidMoveException {
