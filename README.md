@@ -2,6 +2,10 @@
 
 Mancala Game with GUI
 
+# Test Cases
+
+Test Cases for both rule sets can be found at src/test/java/mancala .
+
 # Description
 
 This is a Java implementation of the popular Mancala board game with a graphical user interface (GUI). The game supports two players and follows customizable rulesets, such as "Ayo Rules" or "Kalah Rules." Players take turns making strategic moves to capture stones and win the game. The GUI provides an interactive interface for gameplay, including options to save and load games.
@@ -24,18 +28,14 @@ This is a Java implementation of the popular Mancala board game with a graphical
 
 4. Enjoy!
 
-
 # Limitations
-
-This GUI does not work in any docker containers or scioer shell, it is used on the computers terminal and will act differently if used in a server of any kind.
 
 Author Information
 Name : Pranay Harpalani
-Student ID: 1249973
-Email: <pharpala@uoguelph.ca>
+Student ID: -------
+Email: <pranayharpalani@icloud.com>
 
 Development History
-Keep a log of what things you accomplish when.  You can use git's tagging feature to tag the versions or you can reference commits.
 
 0.3
 
@@ -49,8 +49,8 @@ Made Code and exceptions.
 
 Initial Structure making.
 
-Acknowledgments
-Inspiration, code snippets, etc.
+
+Acknowledgments:
 
 awesome-readme
 [simple-readme] (<https://gist.githubusercontent.com/DomPizzie/7a5ff55ffa9081f2de27c315f5018afc/raw/d59043abbb123089ad6602aba571121b71d91d7f/README-Template.md>)
