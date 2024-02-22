@@ -16,7 +16,7 @@ This is a Java implementation of the popular Mancala board game with a graphical
 
 # Executing program
 
-1. Dowload the [JAR file] (https://github.com/pharpala/Mancala/raw/main/build/libs/MancalaGUI.jar)
+1. Dowload the [JAR file](https://github.com/pharpala/Mancala/raw/main/build/libs/MancalaGUI.jar)
 
 2. Click on the file to run it
 
